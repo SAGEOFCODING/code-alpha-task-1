@@ -6,72 +6,251 @@ import joblib
 from src.predict import predict_species
 
 # Must be the first streamlit command
-st.set_page_config(page_title="Iris Classifier", page_icon="🌿", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Iris Classifier", page_icon="🌼", layout="wide", initial_sidebar_state="expanded")
 
-# --- Custom CSS for Botanical Intelligence Dark Mode ---
+# --- Custom CSS for Animated Bauhaus Style ---
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap');
+
     /* Main Container & Typography */
     .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
-        font-family: 'Manrope', sans-serif;
+        font-family: 'Inter', sans-serif;
+        background-color: #f5f0e8;
+        color: #1a1a1a;
     }
     h1, h2, h3, h4, h5 {
-        font-family: 'Epilogue', sans-serif;
-        color: #f8fafc;
+        font-family: 'Space Grotesk', sans-serif;
+        color: #1a1a1a;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
     }
     
-    /* Cards and KPI Containers */
-    div[data-testid="metric-container"] {
-        background-color: #1e293b;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 5% 5% 5% 10%;
-        border-radius: 16px;
-        color: #dae2fd;
-        overflow-wrap: break-word;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        transition: all 0.2s ease-in-out;
-    }
-    div[data-testid="metric-container"]:hover {
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+    /* Global Streamlit elements */
+    .stApp {
+        background-color: #f5f0e8;
     }
     
-    /* Custom Result Card */
+    /* Buttons */
+    div.stButton > button {
+        background-color: #ffcc00;
+        color: #1a1a1a;
+        border: 4px solid #1a1a1a !important;
+        box-shadow: 6px 6px 0px rgba(26,26,26,1) !important;
+        border-radius: 0px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.2s ease-out;
+    }
+    div.stButton > button:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0px rgba(26,26,26,1) !important;
+        color: #1a1a1a;
+    }
+    div.stButton > button:active {
+        transform: translate(4px, 4px);
+        box-shadow: 2px 2px 0px rgba(26,26,26,1) !important;
+    }
+    
+    /* Sliders */
+    div[data-baseweb="slider"] {
+        padding-top: 10px;
+    }
+    div[data-testid="stThumbValue"] {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: bold;
+        color: #1a1a1a;
+        background: #ffcc00;
+        border: 2px solid #1a1a1a;
+        padding: 2px 6px;
+    }
+
+    /* Input Sections (Neo-brutalist panels) */
+    .bauhaus-panel {
+        background-color: #ffffff;
+        border: 4px solid #1a1a1a;
+        box-shadow: 4px 4px 0px rgba(26,26,26,1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+    }
+    .bauhaus-panel:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0px rgba(26,26,26,1);
+    }
+    
+    /* Result Card */
     .result-card {
-        background-color: #1e293b;
-        border: 1px solid rgba(168, 85, 247, 0.3);
-        border-radius: 16px;
-        padding: 2rem;
+        background-color: #ffffff;
+        border: 4px solid #1a1a1a;
+        box-shadow: 8px 8px 0px rgba(26,26,26,1);
+        padding: 0;
         text-align: center;
-        box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        position: relative;
+        overflow: hidden;
     }
-    .result-title {
-        color: #94a3b8;
+    .result-header {
+        background-color: #ffcc00;
+        border-bottom: 4px solid #1a1a1a;
+        padding: 1rem;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        text-transform: uppercase;
         font-size: 1.2rem;
-        margin-bottom: 0.5rem;
+    }
+    .result-body {
+        padding: 2rem;
+        background-color: #faf7f2;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    /* Geometric Shapes for Result Card */
+    .result-shape-1 {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background-color: #e63b2e;
+        border-left: 4px solid #1a1a1a;
+        border-bottom: 4px solid #1a1a1a;
+        transform: translate(20px, -20px) rotate(45deg);
+    }
+    .result-shape-2 {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 60px;
+        background-color: #0055ff;
+        border-right: 4px solid #1a1a1a;
+        border-top: 4px solid #1a1a1a;
+        border-radius: 50%;
+        transform: translate(-10px, 10px);
+    }
+
+    .result-species {
+        background-color: #ffffff;
+        border: 4px solid #1a1a1a;
+        box-shadow: 4px 4px 0px rgba(26,26,26,1);
+        padding: 1.5rem;
+        margin-top: 2rem;
+        position: relative;
+        z-index: 10;
+        transition: transform 0.3s;
+    }
+    .result-species:hover {
+        transform: translateY(-4px);
+        box-shadow: 8px 8px 0px rgba(26,26,26,1);
+    }
+    .result-badge {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #ffcc00;
+        border: 2px solid #1a1a1a;
+        padding: 2px 8px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-transform: uppercase;
     }
     .result-value {
-        color: #a855f7;
-        font-size: 2.5rem;
+        color: #1a1a1a;
+        font-size: 2.2rem;
         font-weight: bold;
-        margin-bottom: 1rem;
-        font-family: 'Epilogue', sans-serif;
+        font-family: 'Space Grotesk', sans-serif;
+        text-transform: uppercase;
+        margin: 0;
     }
     .result-confidence {
-        color: #10b981;
-        font-size: 1.1rem;
-        font-family: 'JetBrains Mono', monospace;
+        display: inline-block;
+        background-color: #e63b2e;
+        color: #ffffff;
+        border: 2px solid #1a1a1a;
+        box-shadow: 2px 2px 0px rgba(26,26,26,1);
+        padding: 4px 12px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: bold;
+        margin-top: 1rem;
+        text-transform: uppercase;
+    }
+    
+    /* Override native metric containers */
+    div[data-testid="metric-container"] {
+        display: none; /* We will use custom HTML instead for KPIs */
+    }
+    
+    /* Custom KPI Cards */
+    .kpi-card {
+        background-color: #ffffff;
+        border: 4px solid #1a1a1a;
+        box-shadow: 6px 6px 0px rgba(26,26,26,1);
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s;
+    }
+    .kpi-card:hover {
+        transform: translate(-4px, -4px);
+        box-shadow: 10px 10px 0px rgba(26,26,26,1);
+    }
+    .kpi-icon {
+        width: 50px;
+        height: 50px;
+        border: 2px solid #1a1a1a;
+        box-shadow: 2px 2px 0px rgba(26,26,26,1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .kpi-icon.yellow { background-color: #ffcc00; }
+    .kpi-icon.red { background-color: #e63b2e; color: white; }
+    .kpi-icon.blue { background-color: #0055ff; color: white; }
+    
+    .kpi-label {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: bold;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        color: #1a1a1a;
+        margin: 0;
+    }
+    .kpi-value {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: bold;
+        font-size: 1.8rem;
+        color: #1a1a1a;
+        margin: 0;
+        line-height: 1;
     }
     
     /* DataFrame Styling */
     .dataframe {
-        border-radius: 8px;
+        border: 4px solid #1a1a1a !important;
+    }
+    
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        border-right: 4px solid #1a1a1a;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -97,47 +276,55 @@ def load_dataset():
         return None
 
 def main():
-    st.sidebar.title("🌿 Botanical Intelligence")
-    st.sidebar.markdown("Navigate through the application sections.")
+    st.sidebar.title("🌼 Iris Classifier")
+    st.sidebar.markdown("**Digital Herbarium v1.0**")
+    st.sidebar.markdown("---")
     
     # Navigation
     menu = ["Home", "Data Exploration", "Model Performance", "Prediction"]
     choice = st.sidebar.radio("Go to", menu)
     
     st.sidebar.markdown("---")
-    st.sidebar.info("High-performance machine learning model for Iris flower classification.")
+    st.sidebar.info("High-performance machine learning model for Iris flower classification using Neo-Brutalism aesthetics.")
     
     if choice == "Home":
         st.title("Iris Classification Engine")
         st.markdown("""
-        Welcome to the **Botanical Intelligence System**.
-        
-        This dashboard interfaces with a locally trained machine learning model to classify Iris flowers based on precise botanical measurements.
-        
-        1. **Data Exploration**: Review raw dataset and statistical distributions. All visualizations generated during EDA are available here.
-        2. **Model Performance**: Analyze the accuracy and confusion matrix of the trained model.
-        3. **Prediction**: Input new flower measurements for real-time inference.
-        """)
+        <div class="bauhaus-panel">
+            <h3 style="margin-top:0;">Welcome to the Digital Herbarium</h3>
+            <p>This dashboard interfaces with a locally trained machine learning model to classify Iris flowers based on precise botanical measurements.</p>
+            <ol>
+                <li><strong>Data Exploration</strong>: Review raw dataset and statistical distributions. All visualizations generated during EDA are available here.</li>
+                <li><strong>Model Performance</strong>: Analyze the accuracy and confusion matrix of the trained model.</li>
+                <li><strong>Prediction</strong>: Input new flower measurements for real-time inference.</li>
+            </ol>
+        </div>
+        """, unsafe_allow_html=True)
         
     elif choice == "Data Exploration":
         st.title("Data Exploration & Visualizations")
         df = load_dataset()
         
         if df is not None:
+            st.markdown('<div class="bauhaus-panel">', unsafe_allow_html=True)
             st.subheader("Dataset Preview")
             st.dataframe(df.head(10), use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             st.subheader("Dataset Visualizations")
-            st.markdown("Here are the comprehensive visual distributions of the Iris dataset.")
             
             # Row 1: Pairplot and Heatmap
             col1, col2 = st.columns(2)
             try:
                 with col1:
-                    st.image(os.path.join("reports", "assets", "pairplot.png"), caption="Pairplot: Feature Relationships", use_container_width=True)
+                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
+                    st.image(os.path.join("reports", "assets", "pairplot.png"), use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
                 with col2:
-                    st.image(os.path.join("reports", "assets", "correlation_heatmap.png"), caption="Correlation Heatmap", use_container_width=True)
+                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
+                    st.image(os.path.join("reports", "assets", "correlation_heatmap.png"), use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
             except Exception:
                 st.warning("Could not load Pairplot or Heatmap. Please ensure training pipeline was run.")
                 
@@ -145,9 +332,13 @@ def main():
             col3, col4 = st.columns(2)
             try:
                 with col3:
-                    st.image(os.path.join("reports", "assets", "histograms.png"), caption="Histograms: Feature Distributions", use_container_width=True)
+                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
+                    st.image(os.path.join("reports", "assets", "histograms.png"), use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
                 with col4:
-                    st.image(os.path.join("reports", "assets", "violin_plots.png"), caption="Violin Plots: Data Density", use_container_width=True)
+                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
+                    st.image(os.path.join("reports", "assets", "violin_plots.png"), use_container_width=True)
+                    st.markdown('</div>', unsafe_allow_html=True)
             except Exception:
                 st.warning("Could not load Histograms or Violin Plots. Please ensure training pipeline was run.")
                 
@@ -159,18 +350,20 @@ def main():
         
         try:
             eval_df = pd.read_csv(os.path.join("reports", "evaluation_summary.csv"))
-            st.subheader("Model Comparison")
             
-            # Use styling for better presentation
-            st.dataframe(eval_df.style.highlight_max(subset=['Accuracy', 'F1 Score'], color='rgba(168, 85, 247, 0.3)'), use_container_width=True)
+            st.markdown('<div class="bauhaus-panel">', unsafe_allow_html=True)
+            st.subheader("Model Comparison")
+            st.dataframe(eval_df.style.highlight_max(subset=['Accuracy', 'F1 Score'], color='#ffcc00'), use_container_width=True)
             
             best_model_name = eval_df.iloc[0]['Model']
-            st.success(f"**Active Model:** {best_model_name} (Accuracy: {eval_df.iloc[0]['Accuracy']:.4f})")
+            st.markdown(f"**Active Model:** {best_model_name} (Accuracy: {eval_df.iloc[0]['Accuracy']:.4f})")
+            st.markdown('</div>', unsafe_allow_html=True)
             
             col1, col2 = st.columns(2)
             
             with col1:
-                st.subheader(f"Confusion Matrix ({best_model_name})")
+                st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
+                st.markdown(f"<div style='padding:1rem; border-bottom:4px solid #1a1a1a; background:#ffcc00; font-family:Space Grotesk; font-weight:bold;'>Confusion Matrix ({best_model_name})</div>", unsafe_allow_html=True)
                 cm_path = os.path.join("reports", "assets", f"confusion_matrix_{best_model_name.replace(' ', '_').lower()}.png")
                 if os.path.exists(cm_path):
                     st.image(cm_path, use_container_width=True)
@@ -179,8 +372,10 @@ def main():
                     cm_files = glob.glob(os.path.join("reports", "assets", "confusion_matrix_*.png"))
                     if cm_files:
                         st.image(cm_files[0], use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
             
             with col2:
+                st.markdown('<div class="bauhaus-panel">', unsafe_allow_html=True)
                 st.subheader("Classification Report")
                 try:
                     with open(os.path.join("reports", "classification_report.txt"), "r") as f:
@@ -188,12 +383,13 @@ def main():
                     st.text(report)
                 except FileNotFoundError:
                     st.warning("Classification report not found.")
+                st.markdown('</div>', unsafe_allow_html=True)
                 
         except FileNotFoundError:
             st.error("Evaluation results not found.")
             
     elif choice == "Prediction":
-        st.title("Live Prediction Interface")
+        st.title("Live Prediction Inference")
         
         scaler, label_encoder, feature_names, best_model = load_models_and_objects()
         
@@ -205,19 +401,22 @@ def main():
         main_col1, main_col2 = st.columns([1, 1], gap="large")
         
         with main_col1:
-            st.subheader("Input Parameters")
-            st.markdown("Adjust the sliders to input botanical measurements.")
+            st.markdown("""
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 4px solid #1a1a1a; padding-bottom:1rem; margin-bottom:1rem;">
+                <h2 style="margin:0;">Input Parameters</h2>
+                <span style="background:#ffcc00; border:2px solid #1a1a1a; font-family:'Space Grotesk'; font-weight:bold; font-size:0.8rem; padding:4px 8px; box-shadow:2px 2px 0px #1a1a1a; text-transform:uppercase;">Live Inference</span>
+            </div>
+            """, unsafe_allow_html=True)
             
             sepal_length = st.slider("Sepal Length (cm)", min_value=0.0, max_value=10.0, value=5.1, step=0.1)
             sepal_width = st.slider("Sepal Width (cm)", min_value=0.0, max_value=10.0, value=3.5, step=0.1)
             petal_length = st.slider("Petal Length (cm)", min_value=0.0, max_value=10.0, value=1.4, step=0.1)
             petal_width = st.slider("Petal Width (cm)", min_value=0.0, max_value=10.0, value=0.2, step=0.1)
             
-            predict_btn = st.button("Run Inference", type="primary", use_container_width=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+            predict_btn = st.button("Run Classification", type="primary", use_container_width=True)
             
         with main_col2:
-            st.subheader("Classification Result")
-            
             if predict_btn:
                 features = [sepal_length, sepal_width, petal_length, petal_width]
                 predicted_species, prob_dict = predict_species(best_model, scaler, label_encoder, features, feature_names)
@@ -225,26 +424,37 @@ def main():
                 max_prob = max(prob_dict.values()) * 100
                 
                 st.markdown(f"""
-                <div class="result-card">
-                    <div class="result-title">Predicted Species</div>
-                    <div class="result-value">{predicted_species}</div>
-                    <div class="result-confidence">Confidence Score: {max_prob:.2f}%</div>
-                </div>
-                """, unsafe_allow_html=True)
+<div class="result-card">
+<div class="result-header">Classification Result</div>
+<div class="result-body">
+<div class="result-shape-1"></div>
+<div class="result-shape-2"></div>
+<div class="result-species">
+<div class="result-badge">Predicted Species</div>
+<h3 class="result-value">{predicted_species}</h3>
+<div class="result-confidence">Confidence: {max_prob:.2f}%</div>
+</div>
+</div>
+</div>
+""", unsafe_allow_html=True)
                 
             else:
                 st.markdown("""
-                <div class="result-card" style="border-color: rgba(255,255,255,0.05);">
-                    <div class="result-title">Awaiting Input</div>
-                    <div style="color: #64748b; margin-top: 1rem;">Adjust parameters and click 'Run Inference'</div>
-                </div>
-                """, unsafe_allow_html=True)
+<div class="result-card">
+<div class="result-header">Classification Result</div>
+<div class="result-body">
+<div class="result-shape-1" style="background-color:#d0cbc3;"></div>
+<div class="result-species" style="box-shadow:none;">
+<div class="result-badge" style="background:#e8e3da;">Awaiting Input</div>
+<h3 class="result-value" style="color:#a0a0a0;">---</h3>
+<div style="font-family:'Space Grotesk'; font-weight:bold; margin-top:1rem; text-transform:uppercase; color:#a0a0a0;">Adjust parameters and click 'Run'</div>
+</div>
+</div>
+</div>
+""", unsafe_allow_html=True)
                 
         # Bottom Row: KPIs
-        st.markdown("<br><hr style='border-color: rgba(255,255,255,0.1);'><br>", unsafe_allow_html=True)
-        st.subheader("Model Diagnostics")
-        
-        kpi1, kpi2, kpi3 = st.columns(3)
+        st.markdown("<br><hr style='border-top: 4px solid #1a1a1a;'><br>", unsafe_allow_html=True)
         
         # Load accuracy for KPI if available
         acc = "N/A"
@@ -256,12 +466,37 @@ def main():
         except Exception:
             pass
             
+        kpi1, kpi2, kpi3 = st.columns(3)
         with kpi1:
-            st.metric(label="Model Accuracy", value=acc)
+            st.markdown(f"""
+            <div class="kpi-card">
+                <div class="kpi-icon yellow">🎯</div>
+                <div>
+                    <p class="kpi-label">Model Accuracy</p>
+                    <p class="kpi-value">{acc}</p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
         with kpi2:
-            st.metric(label="F1 Score", value=f1)
+            st.markdown(f"""
+            <div class="kpi-card">
+                <div class="kpi-icon red">📈</div>
+                <div>
+                    <p class="kpi-label">F1 Score</p>
+                    <p class="kpi-value">{f1}</p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
         with kpi3:
-            st.metric(label="Total Samples", value="150")
+            st.markdown(f"""
+            <div class="kpi-card">
+                <div class="kpi-icon blue">📊</div>
+                <div>
+                    <p class="kpi-label">Total Samples</p>
+                    <p class="kpi-value">150</p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
