@@ -329,7 +329,16 @@ def main():
     
     # Navigation
     menu = ["Home", "Data Exploration", "Model Performance", "Prediction"]
-    choice = st.sidebar.radio("Go to", menu)
+    
+    nav_param = st.query_params.get("nav", None)
+    if "nav_radio" not in st.session_state:
+        st.session_state.nav_radio = "Home"
+        
+    if nav_param in menu and nav_param != st.session_state.nav_radio:
+        st.session_state.nav_radio = nav_param
+        st.query_params.clear()
+        
+    choice = st.sidebar.radio("Go to", menu, key="nav_radio")
     
     st.sidebar.markdown("---")
     st.sidebar.info("High-performance machine learning model for Iris flower classification using Neo-Brutalism aesthetics.")
@@ -348,24 +357,30 @@ def main():
 <p style="font-size:1.1rem; margin:0; font-weight:500;">This dashboard interfaces with a locally trained machine learning model to classify Iris flowers based on precise botanical measurements.</p>
 </div>
 <div style="position:relative; z-index:1; max-width: 90%;">
+<a href="?nav=Data+Exploration" target="_self" style="text-decoration:none; color:inherit; display:block;">
 <div class="bauhaus-list-item">
 <div style="margin-bottom: 0.5rem;">
 <span class="bauhaus-badge" style="background:#0055ff; color:white;">1. Data Exploration</span>
 </div>
 Review raw dataset and statistical distributions. All visualizations generated during EDA are available here.
 </div>
+</a>
+<a href="?nav=Model+Performance" target="_self" style="text-decoration:none; color:inherit; display:block;">
 <div class="bauhaus-list-item">
 <div style="margin-bottom: 0.5rem;">
 <span class="bauhaus-badge" style="background:#e63b2e; color:white;">2. Model Performance</span>
 </div>
 Analyze the accuracy and confusion matrix of the trained model.
 </div>
+</a>
+<a href="?nav=Prediction" target="_self" style="text-decoration:none; color:inherit; display:block;">
 <div class="bauhaus-list-item">
 <div style="margin-bottom: 0.5rem;">
 <span class="bauhaus-badge" style="background:#ffcc00; color:#1a1a1a;">3. Prediction</span>
 </div>
 Input new flower measurements for real-time inference.
 </div>
+</a>
 </div>
 </div>
 """, unsafe_allow_html=True)
