@@ -1,9 +1,6 @@
 # Iris Flower Classification Project 🌿
 
 A complete, professional-grade Machine Learning project for Iris Flower classification using Python, scikit-learn, and Streamlit.
-
-![Botanical Intelligence Dashboard](reports/assets/dashboard_design.png)
-
 ## Overview
 
 This project demonstrates an end-to-end Machine Learning pipeline that classifies the classic Iris dataset. The system features the **Botanical Intelligence Dark System**—a custom-designed, high-fidelity UI aesthetic implemented natively in Streamlit to provide a sleek, modern, and immersive user experience.
