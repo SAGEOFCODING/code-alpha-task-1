@@ -84,6 +84,27 @@ st.markdown("""
         box-shadow: 8px 8px 0px rgba(26,26,26,1);
     }
     
+    /* Native Streamlit Overrides for Bauhaus */
+    div[data-testid="stDataFrame"] > div {
+        border: 4px solid #1a1a1a !important;
+        box-shadow: 4px 4px 0px rgba(26,26,26,1) !important;
+        background-color: #ffffff;
+        margin-bottom: 1rem;
+    }
+    
+    div[data-testid="stImage"] > img {
+        border: 4px solid #1a1a1a !important;
+        box-shadow: 4px 4px 0px rgba(26,26,26,1) !important;
+        margin-bottom: 1rem;
+    }
+    
+    div[data-testid="stText"] {
+        background-color: #ffffff;
+        border: 4px solid #1a1a1a !important;
+        box-shadow: 4px 4px 0px rgba(26,26,26,1) !important;
+        padding: 1.5rem;
+    }
+    
     /* Result Card */
     .result-card {
         background-color: #ffffff;
@@ -252,6 +273,32 @@ st.markdown("""
     [data-testid="stSidebar"] {
         border-right: 4px solid #1a1a1a;
     }
+    
+    /* Home Page Enhancements */
+    .bauhaus-list-item {
+        background: #f5f0e8; 
+        border: 4px solid #1a1a1a; 
+        padding: 1rem; 
+        margin-bottom: 1rem; 
+        box-shadow: 4px 4px 0px rgba(26,26,26,1); 
+        transition: all 0.2s ease-out;
+        font-family: 'Inter', sans-serif;
+        color: #1a1a1a;
+    }
+    .bauhaus-list-item:hover {
+        transform: translate(-4px, -4px);
+        box-shadow: 8px 8px 0px rgba(26,26,26,1);
+    }
+    .bauhaus-badge {
+        font-family: 'Space Grotesk', sans-serif; 
+        border: 2px solid #1a1a1a; 
+        padding: 4px 12px; 
+        font-weight: bold; 
+        margin-right: 10px;
+        box-shadow: 2px 2px 0px rgba(26,26,26,1);
+        text-transform: uppercase;
+        display: inline-block;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -290,26 +337,46 @@ def main():
     if choice == "Home":
         st.title("Iris Classification Engine")
         st.markdown("""
-        <div class="bauhaus-panel">
-            <h3 style="margin-top:0;">Welcome to the Digital Herbarium</h3>
-            <p>This dashboard interfaces with a locally trained machine learning model to classify Iris flowers based on precise botanical measurements.</p>
-            <ol>
-                <li><strong>Data Exploration</strong>: Review raw dataset and statistical distributions. All visualizations generated during EDA are available here.</li>
-                <li><strong>Model Performance</strong>: Analyze the accuracy and confusion matrix of the trained model.</li>
-                <li><strong>Prediction</strong>: Input new flower measurements for real-time inference.</li>
-            </ol>
-        </div>
-        """, unsafe_allow_html=True)
+<div class="bauhaus-panel" style="position:relative; overflow:hidden; background-image: radial-gradient(#1a1a1a 1.5px, transparent 1.5px); background-size: 20px 20px; background-color: #ffffff;">
+<div style="position:absolute; top:-20px; right:-20px; width:120px; height:120px; background:#ffcc00; border-radius:50%; border:4px solid #1a1a1a;"></div>
+<div style="position:absolute; bottom:30px; right:60px; width:50px; height:50px; background:#e63b2e; transform:rotate(45deg); border:4px solid #1a1a1a;"></div>
+<div style="position:absolute; top:40%; right:10px; width:30px; height:30px; background:#0055ff; border:4px solid #1a1a1a;"></div>
+<div style="background:#ffffff; border:4px solid #1a1a1a; padding:1.5rem; display:inline-block; margin-bottom:1.5rem; box-shadow:6px 6px 0px #1a1a1a; position:relative; z-index:1;">
+<h2 style="margin:0; font-size:2.2rem;">WELCOME TO THE <span style="color:#e63b2e;">DIGITAL HERBARIUM</span></h2>
+</div>
+<div style="background:#ffffff; border:4px solid #1a1a1a; padding:1.5rem; max-width:85%; position:relative; z-index:1; box-shadow:4px 4px 0px #1a1a1a; margin-bottom: 2rem;">
+<p style="font-size:1.1rem; margin:0; font-weight:500;">This dashboard interfaces with a locally trained machine learning model to classify Iris flowers based on precise botanical measurements.</p>
+</div>
+<div style="position:relative; z-index:1; max-width: 90%;">
+<div class="bauhaus-list-item">
+<div style="margin-bottom: 0.5rem;">
+<span class="bauhaus-badge" style="background:#0055ff; color:white;">1. Data Exploration</span>
+</div>
+Review raw dataset and statistical distributions. All visualizations generated during EDA are available here.
+</div>
+<div class="bauhaus-list-item">
+<div style="margin-bottom: 0.5rem;">
+<span class="bauhaus-badge" style="background:#e63b2e; color:white;">2. Model Performance</span>
+</div>
+Analyze the accuracy and confusion matrix of the trained model.
+</div>
+<div class="bauhaus-list-item">
+<div style="margin-bottom: 0.5rem;">
+<span class="bauhaus-badge" style="background:#ffcc00; color:#1a1a1a;">3. Prediction</span>
+</div>
+Input new flower measurements for real-time inference.
+</div>
+</div>
+</div>
+""", unsafe_allow_html=True)
         
     elif choice == "Data Exploration":
         st.title("Data Exploration & Visualizations")
         df = load_dataset()
         
         if df is not None:
-            st.markdown('<div class="bauhaus-panel">', unsafe_allow_html=True)
             st.subheader("Dataset Preview")
             st.dataframe(df.head(10), use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             st.subheader("Dataset Visualizations")
@@ -318,13 +385,9 @@ def main():
             col1, col2 = st.columns(2)
             try:
                 with col1:
-                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
                     st.image(os.path.join("reports", "assets", "pairplot.png"), use_container_width=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
                 with col2:
-                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
                     st.image(os.path.join("reports", "assets", "correlation_heatmap.png"), use_container_width=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
             except Exception:
                 st.warning("Could not load Pairplot or Heatmap. Please ensure training pipeline was run.")
                 
@@ -332,13 +395,9 @@ def main():
             col3, col4 = st.columns(2)
             try:
                 with col3:
-                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
                     st.image(os.path.join("reports", "assets", "histograms.png"), use_container_width=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
                 with col4:
-                    st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
                     st.image(os.path.join("reports", "assets", "violin_plots.png"), use_container_width=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
             except Exception:
                 st.warning("Could not load Histograms or Violin Plots. Please ensure training pipeline was run.")
                 
@@ -351,19 +410,16 @@ def main():
         try:
             eval_df = pd.read_csv(os.path.join("reports", "evaluation_summary.csv"))
             
-            st.markdown('<div class="bauhaus-panel">', unsafe_allow_html=True)
             st.subheader("Model Comparison")
             st.dataframe(eval_df.style.highlight_max(subset=['Accuracy', 'F1 Score'], color='#ffcc00'), use_container_width=True)
             
             best_model_name = eval_df.iloc[0]['Model']
-            st.markdown(f"**Active Model:** {best_model_name} (Accuracy: {eval_df.iloc[0]['Accuracy']:.4f})")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown(f"<div class='bauhaus-panel' style='padding:1rem; margin-top:1rem;'><strong>Active Model:</strong> {best_model_name} (Accuracy: {eval_df.iloc[0]['Accuracy']:.4f})</div>", unsafe_allow_html=True)
             
             col1, col2 = st.columns(2)
             
             with col1:
-                st.markdown('<div class="bauhaus-panel" style="padding:0; overflow:hidden;">', unsafe_allow_html=True)
-                st.markdown(f"<div style='padding:1rem; border-bottom:4px solid #1a1a1a; background:#ffcc00; font-family:Space Grotesk; font-weight:bold;'>Confusion Matrix ({best_model_name})</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='padding:1rem; border:4px solid #1a1a1a; border-bottom:0; background:#ffcc00; font-family:Space Grotesk; font-weight:bold;'>Confusion Matrix ({best_model_name})</div>", unsafe_allow_html=True)
                 cm_path = os.path.join("reports", "assets", f"confusion_matrix_{best_model_name.replace(' ', '_').lower()}.png")
                 if os.path.exists(cm_path):
                     st.image(cm_path, use_container_width=True)
@@ -372,10 +428,8 @@ def main():
                     cm_files = glob.glob(os.path.join("reports", "assets", "confusion_matrix_*.png"))
                     if cm_files:
                         st.image(cm_files[0], use_container_width=True)
-                st.markdown('</div>', unsafe_allow_html=True)
             
             with col2:
-                st.markdown('<div class="bauhaus-panel">', unsafe_allow_html=True)
                 st.subheader("Classification Report")
                 try:
                     with open(os.path.join("reports", "classification_report.txt"), "r") as f:
@@ -383,7 +437,6 @@ def main():
                     st.text(report)
                 except FileNotFoundError:
                     st.warning("Classification report not found.")
-                st.markdown('</div>', unsafe_allow_html=True)
                 
         except FileNotFoundError:
             st.error("Evaluation results not found.")
